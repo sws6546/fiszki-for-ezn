@@ -2,6 +2,7 @@ import { useContext, useState } from "react"
 import { CardContext } from "../contexts/cardsContext"
 import type { flashCardType } from "../hooks/useFlashCards";
 import ResultsTable from "../components/ResultsTable";
+import { NavigationContext } from "../contexts/navigationContext";
 
 
 function shuffleArray(arr: any[]) {
@@ -13,11 +14,19 @@ function shuffleArray(arr: any[]) {
 }
 
 export default function Play() {
-  const [cards, setCards] = useState<flashCardType[]>(shuffleArray([...useContext(CardContext)!.cards]))
+  const cardsManager = useContext(CardContext);
+  const [cards, setCards] = useState<flashCardType[]>(shuffleArray([...cardsManager!.cards]))
   const [correct, setCorrect] = useState<flashCardType[]>([])
   const [incorrect, setInCorrect] = useState<flashCardType[]>([])
   const [translation, setTranslation] = useState<string>("")
+  const navigation = useContext(NavigationContext)
 
+  function refreshGame() {
+    setCards(shuffleArray([...cardsManager!.cards]))
+    setCorrect([])
+    setInCorrect([])
+    setTranslation("")
+  }
 
   if (cards.length === 0) {
     return (
@@ -27,6 +36,10 @@ export default function Play() {
           <div className="row justify-content-evenly">
             <div className="col-2"><h3 className="text-success">Poprawne: {correct.length}</h3></div>
             <div className="col-2"><h3 className="text-danger">Błędne: {incorrect.length}</h3></div>
+          </div>
+          <div className="btn-group btn-group-lg">
+            <button className="btn btn-primary" onClick={() => navigation?.setNavigation("")}>Powrót</button>
+            <button className="btn btn-info" onClick={() => refreshGame()}>Jeszcze raz</button>
           </div>
           <ResultsTable corrects={correct} incorrects={incorrect} />
         </section>
@@ -42,7 +55,7 @@ export default function Play() {
           setCorrect(c => [...c, cards[0]])
         }
         else {
-          setInCorrect(c => [...c, {...cards[0], secondLangName: translation.toLowerCase()}])
+          setInCorrect(c => [...c, { ...cards[0], secondLangName: translation.toLowerCase() }])
         }
         setCards(cards.filter(c => c !== cards[0]))
         setTranslation("")
