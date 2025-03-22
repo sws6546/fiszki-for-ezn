@@ -1,6 +1,8 @@
 import { useContext, useState } from "react"
 import { CardContext } from "../contexts/cardsContext"
 import type { flashCardType } from "../hooks/useFlashCards";
+import ResultsTable from "../components/ResultsTable";
+
 
 function shuffleArray(arr: any[]) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -16,15 +18,19 @@ export default function Play() {
   const [incorrect, setInCorrect] = useState<flashCardType[]>([])
   const [translation, setTranslation] = useState<string>("")
 
+
   if (cards.length === 0) {
     return (
-      <section className="container-sm text-center mt-4">
-        <div className="row"><h2>wyniki</h2></div>
-        <div className="row justify-content-center">
-          <div className="col-2"><h3 className="text-success">Poprawne: {correct.length}</h3></div>
-          <div className="col-2"><h3 className="text-danger">Błędne: {incorrect.length}</h3></div>
-        </div>
-      </section>
+      <>
+        <section className="container-sm text-center mt-4">
+          <div className="row"><h2>wyniki</h2></div>
+          <div className="row justify-content-evenly">
+            <div className="col-2"><h3 className="text-success">Poprawne: {correct.length}</h3></div>
+            <div className="col-2"><h3 className="text-danger">Błędne: {incorrect.length}</h3></div>
+          </div>
+          <ResultsTable corrects={correct} incorrects={incorrect} />
+        </section>
+      </>
     )
   }
 
@@ -36,7 +42,7 @@ export default function Play() {
           setCorrect(c => [...c, cards[0]])
         }
         else {
-          setInCorrect(c => [...c, cards[0]])
+          setInCorrect(c => [...c, {...cards[0], secondLangName: translation.toLowerCase()}])
         }
         setCards(cards.filter(c => c !== cards[0]))
         setTranslation("")

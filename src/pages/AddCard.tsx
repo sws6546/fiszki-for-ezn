@@ -19,9 +19,16 @@ export default function AddCard() {
           }} type="text" className="form-control mt-3" placeholder="tłumaczenie" value={formState.second} />
           <div className="btn-group btn-group-lg" role="group">
             <button onClick={() => {
-              if (formState.first != "" && formState.second != "")
-                cardManager?.addCard(formState.first, formState.second)
-              setFormState({ first: "", second: "" })
+              if (formState.first != "" && formState.second != "") {
+                const filteredCards = cardManager?.cards.filter(card => card.firstLangName === formState.first);
+                if (!filteredCards?.length) {
+                  cardManager?.addCard(formState.first, formState.second);
+                  setFormState({ first: "", second: "" })
+                } else {
+                  console.error("A card with the same first word already exists.");
+                  alert("To słówko już istnieje")
+                }
+              }
             }}
               className="btn btn-primary mt-3">Dodaj słówko</button>
             <button onClick={() => {
