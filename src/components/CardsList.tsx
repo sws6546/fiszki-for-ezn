@@ -14,7 +14,7 @@ export default function CardsList() {
               <p className="card-text">
                 <button onClick={() => {
                   cardsManager?.removeCard(card.id)
-                }} className="btn btn-danger">RemoveCard</button>
+                }} className="btn btn-danger">🗑 Usuń kartę</button>
               </p>
             </div>
           </div>
